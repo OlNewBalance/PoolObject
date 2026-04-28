@@ -1,22 +1,21 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] float _speed;
-
-    private ObjectPool _poolObjects;
+    [SerializeField] private float _speed;
     private Vector3 _targetPosition;
-
-    public void Init(ObjectPool poolObjects, Transform targetPosition)
-    {
-        _targetPosition = targetPosition.transform.position;
-        _poolObjects = poolObjects;
-    }
 
     private void Update()
     {
         Move();
+    }
+
+    public void Init(Transform targetPosition,Transform spawnCharacteristics)
+    {
+        gameObject.transform.position = spawnCharacteristics.position;
+        gameObject.transform.rotation = spawnCharacteristics.rotation;
+
+        _targetPosition = targetPosition.transform.position;
     }
 
     private void Move()

@@ -4,71 +4,33 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> _objects;
+    [SerializeField] private Enemy _enemyPrefab;
+    [SerializeField] private List<Enemy> _objects = new List<Enemy>();
 
-    private int _maxEnemies = 2;
-
-    public void Set(GameObject enemyPrefab)
+    private void Create()
     {
-        if (_objects is null)
-        {
-            _objects = new List<GameObject>();
-        }
-
-        if (_objects.Count == _maxEnemies)
-        {
-            return;
-        }
-
-        GameObject addedObject = Instantiate(enemyPrefab);
-        addedObject.SetActive(false);
+        Enemy addedObject = Instantiate(_enemyPrefab, _enemyPrefab.transform.position, _enemyPrefab.transform.rotation);
+        addedObject.gameObject.SetActive(false);
         _objects.Add(addedObject);
     }
 
-    public GameObject Get(GameObject enemyPrefab, Transform spawnPoint, Transform targetPosition)
+    public Enemy Get()
     {
-        if (_objects is null)
+        if (_objects.Count == 0)
         {
-            _objects = new List<GameObject>();
+            Create();
         }
 
-        if (_objects.Contains(enemyPrefab) == false)
-        {
-            Set(enemyPrefab);
-        }
+        Enemy result = _objects.Where(o => o != null).First();
 
-        GameObject result = _objects.Where(o => o != null).First();
-
-        Enemy enemy = result.GetComponent<Enemy>();
-        enemy.Init(this, targetPosition);
-
-        Rigidbody rb = result.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        result.transform.position = spawnPoint.transform.position;
-        result.SetActive(true);
+        result.gameObject.SetActive(true);
         _objects.Remove(result);
         return result;
     }
 
-    public void Put(GameObject enemyPrefab)
+    public void Put(Enemy enemyPrefab)
     {
-        if (_objects is null)
-        {
-            _objects = new List<GameObject>();
-        }
-
-        if (_objects.Count == _maxEnemies)
-        {
-            Destroy(enemyPrefab);
-            return;
-        }
-
-        enemyPrefab.SetActive(false);
+        enemyPrefab.gameObject.SetActive(false);
         _objects.Add(enemyPrefab);
     }
 }

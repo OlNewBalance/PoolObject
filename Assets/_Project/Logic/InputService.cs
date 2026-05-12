@@ -42,14 +42,4 @@ public class InputService : MonoBehaviour
             _playerMovement.Movement(ref inputDirection);
         }
     }
-
-    private void ReadMouse()
-    {
-        Vector2 inputDirection = _inputActions.Player.Look.ReadValue<Vector2>();
-
-        if (inputDirection != null)
-        {
-            //_playerMovement.Looking(ref inputDirection);
-        }
-    }
 }

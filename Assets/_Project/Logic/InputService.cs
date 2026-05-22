@@ -1,55 +1,42 @@
 using UnityEngine;
 
-public class InputService : MonoBehaviour
+public class NewMonoBehaviourScript : MonoBehaviour
 {
-    [SerializeField] private PlayerMovement _playerMovement;
+    [SerializeField] private Coroutine _coroutine;
+    [SerializeField] private Cube _cube;
 
-    private PlayerInput _inputActions;
+    private InputSystem_Actions _inputActions;
 
     private void Awake()
     {
-        _inputActions = new PlayerInput();
+        _inputActions = new InputSystem_Actions();
         _inputActions.Enable();
-    }
-
-    private void Update()
-    {
-        ReadMovement();
-        ReadMouse();
     }
 
     private void OnEnable()
     {
-        _inputActions.Player.Jump.performed += JumpPerformed;
+        _inputActions.CoroutineMap.RightButton.performed += RightButton;
+        _inputActions.CoroutineMap.LeftButton.performed += LeftButton;
+        _inputActions.CoroutineMap.RButton.performed += RButton;
+        _inputActions.CoroutineMap.SpaceButton.performed += SpaceButton;
     }
 
-    private void OnDisable()
+    private void RightButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _inputActions.Player.Jump.performed -= JumpPerformed;
+        _coroutine.StartCount();
     }
 
-    private void JumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void LeftButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _playerMovement.Jumping();
+        _coroutine.StopCount();
     }
 
-    private void ReadMovement()
+    private void RButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        Vector3 inputDirection = _inputActions.Player.Move.ReadValue<Vector3>();
-
-        if (inputDirection != Vector3.zero)
-        {
-            _playerMovement.Movement(ref inputDirection);
-        }
+        //_cube.ResetFading();
     }
-
-    private void ReadMouse()
+    private void SpaceButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        Vector2 inputDirection = _inputActions.Player.Look.ReadValue<Vector2>();
-
-        if (inputDirection != null)
-        {
-            //_playerMovement.Looking(ref inputDirection);
-        }
+        //_cube.StopFading();
     }
 }

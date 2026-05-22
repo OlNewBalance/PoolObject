@@ -1,45 +1,31 @@
 using UnityEngine;
 
-public class InputService : MonoBehaviour
+public class NewMonoBehaviourScript : MonoBehaviour
 {
-    [SerializeField] private PlayerMovement _playerMovement;
+    [SerializeField] private Coroutine _coroutine;
+    [SerializeField] private Cube _cube;
 
-    private PlayerInput _inputActions;
+    private InputSystem_Actions _inputActions;
 
     private void Awake()
     {
-        _inputActions = new PlayerInput();
+        _inputActions = new InputSystem_Actions();
         _inputActions.Enable();
-    }
-
-    private void Update()
-    {
-        ReadMovement();
-        ReadMouse();
     }
 
     private void OnEnable()
     {
-        _inputActions.Player.Jump.performed += JumpPerformed;
+        _inputActions.CoroutineMap.RButton.performed += RButton;
+        _inputActions.CoroutineMap.SpaceButton.performed += SpaceButton;
     }
 
-    private void OnDisable()
+    private void RButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _inputActions.Player.Jump.performed -= JumpPerformed;
+        _cube.ResetFading();
     }
 
-    private void JumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void SpaceButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _playerMovement.Jumping();
-    }
-
-    private void ReadMovement()
-    {
-        Vector3 inputDirection = _inputActions.Player.Move.ReadValue<Vector3>();
-
-        if (inputDirection != Vector3.zero)
-        {
-            _playerMovement.Movement(ref inputDirection);
-        }
+        _cube.OnOffFading();
     }
 }

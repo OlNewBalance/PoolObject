@@ -1,42 +1,45 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class InputService : MonoBehaviour
 {
-    [SerializeField] private Coroutine _coroutine;
-    [SerializeField] private Cube _cube;
+    [SerializeField] private PlayerMovement _playerMovement;
 
-    private InputSystem_Actions _inputActions;
+    private PlayerInput _inputActions;
 
     private void Awake()
     {
-        _inputActions = new InputSystem_Actions();
+        _inputActions = new PlayerInput();
         _inputActions.Enable();
+    }
+
+    private void Update()
+    {
+        ReadMovement();
+        ReadMouse();
     }
 
     private void OnEnable()
     {
-        _inputActions.CoroutineMap.RightButton.performed += RightButton;
-        _inputActions.CoroutineMap.LeftButton.performed += LeftButton;
-        _inputActions.CoroutineMap.RButton.performed += RButton;
-        _inputActions.CoroutineMap.SpaceButton.performed += SpaceButton;
+        _inputActions.Player.Jump.performed += JumpPerformed;
     }
 
-    private void RightButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void OnDisable()
     {
-        _coroutine.StartCount();
+        _inputActions.Player.Jump.performed -= JumpPerformed;
     }
 
-    private void LeftButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void JumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _coroutine.StopCount();
+        _playerMovement.Jumping();
     }
 
-    private void RButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void ReadMovement()
     {
-        //_cube.ResetFading();
-    }
-    private void SpaceButton(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        //_cube.StopFading();
+        Vector3 inputDirection = _inputActions.Player.Move.ReadValue<Vector3>();
+
+        if (inputDirection != Vector3.zero)
+        {
+            _playerMovement.Movement(ref inputDirection);
+        }
     }
 }
